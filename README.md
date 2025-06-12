@@ -1,7 +1,7 @@
 # 🏃‍♀️ FitnCo Mobile App
 
 <div align="center">
-  <img src="[https://fitnco.fit/assets/images/logo.png](https://fitnco.fit/wp-content/uploads/2022/10/Fitn-Co-Logo-Animasyon-Final.gif](https://fitnco.fit/wp-content/uploads/2022/10/Fitn-Co-Logo-Animasyon-Final.gif)" alt="FitnCo Logo" width="200"/>
+  <img src="https://fitnco.fit/assets/images/logo.png](https://fitnco.fit/wp-content/uploads/2022/10/Fitn-Co-Logo-Animasyon-Final.gif](https://fitnco.fit/wp-content/uploads/2022/10/Fitn-Co-Logo-Animasyon-Final.gif" alt="FitnCo Logo" width="200"/>
   
   <p align="center">
     <strong>Your Personal Fitness Journey Companion</strong>
