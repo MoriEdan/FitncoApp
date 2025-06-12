@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "46301770420",
+    "project_id": "fit-n-co",
+    "storage_bucket": "fit-n-co.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46301770420:android:bca27bb49ee19d92c45de1",
+        "android_client_info": {
+          "package_name": "com.fitncoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "46301770420-i27egm4etmio9ofj92snrprbd4ftjuvb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaflVhpHO3MhYVGvgQOoBiESdLu05bvCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "46301770420-i27egm4etmio9ofj92snrprbd4ftjuvb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
