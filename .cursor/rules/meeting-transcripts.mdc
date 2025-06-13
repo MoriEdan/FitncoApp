@@ -1,0 +1,690 @@
+---
+description: This includes all meeting transcripts, has all information to develop fitngoapp
+globs: 
+alwaysApply: false
+---
+### FitnCo Geliştirme Planı ve Eğitim Dokümanı
+
+FitnCo, kullanıcıların diyetisyenlerle anlık iletişim kurabileceği, günlük kilo, su, öğün ve spor aktivitelerini takip edebileceği bir mobil sağlık uygulamasıdır. Aşağıda, ekteki toplantı notları, uygulama gereksinimleri ve veri tabanı şemasına dayanarak, veri tabanından başlayarak tüm projeyi yapılandırmak için bir yol haritası ve adım adım bir eğitim dokümanı sunulmaktadır. Bu plan, güvenli bir uygulama geliştirmek için yazılım geliştirici bakış açısıyla hazırlanmıştır ve kullanıcı gereksinimlerini, teknik detayları ve güvenlik önlemlerini kapsamaktadır.
+
+#### **Ana Noktalar**
+- **Kapsamlı Veri Tabanı**: Sağlanan şema, kullanıcı yönetimi, diyet planları, aktivite takibi ve bildirimler gibi temel özellikleri destekler.
+- **Güvenli Mimari**: JWT tabanlı kimlik doğrulama, KVKK uyumluluğu ve veri şifreleme ile güvenli bir sistem tasarlanacaktır.
+- **Modüler Geliştirme**: Proje, veri tabanı kurulumu, arka uç API'leri, mobil uygulama ve gelişmiş özellikler için dört aşamada geliştirilecektir.
+- **Kullanıcı Odaklı Tasarım**: Sezgisel arayüz, özelleştirilebilir bildirimler ve net grafiklerle kullanıcı deneyimi ön planda tutulacaktır.
+- **Ölçeklenebilirlik**: Sistem, çoklu kullanıcı yüklerini desteklemek için optimize edilecektir.
+
+#### **Proje Genel Bakış**
+FitnCo, kullanıcıların sağlık ve fitness hedeflerini yönetmelerine yardımcı olan bir platformdur. Kullanıcılar, diyet planlarını takip edebilir, aktivitelerini kaydedebilir ve diyetisyenlerle gerçek zamanlı iletişim kurabilir. Uygulama, Flutter veya React Native ile geliştirilecek, PostgreSQL veri tabanı ve .NET Core veya Node.js tabanlı bir arka uç kullanılacaktır. Güvenlik, KVKK uyumluluğu ve kullanıcı dostu bir deneyim önceliklidir.
+
+#### **Yol Haritası Özeti**
+1. **Temel Kurulum (1-4 Hafta)**: Veri tabanı kurulumu, arka uç geliştirme ve API belgelenmesi.
+2. **Mobil Uygulama Geliştirme (5-10 Hafta)**: Kullanıcı arayüzü tasarımı, API entegrasyonu ve test.
+3. **Gelişmiş Özellikler (11-16 Hafta)**: Bildirimler, gerçek zamanlı sohbet ve güvenlik iyileştirmeleri.
+4. **Dağıtım ve Bakım (17-20 Hafta)**: Uygulamanın yayınlanması ve sürekli destek.
+
+#### **Güvenlik Önlemleri**
+- JWT ile kimlik doğrulama.
+- Fotoğraflara filigran ekleme ve ekran görüntüsü engelleme.
+- KVKK ve GDPR uyumluluğu için kullanıcı rızası yönetimi.
+
+---
+
+### **FitnCo Geliştirme Planı ve Eğitim Dokümanı (Detaylı)**
+
+Bu bölüm, FitnCo uygulamasını geliştirmek için kapsamlı bir yol haritası ve adım adım bir eğitim dokümanı sunar. Plan, veri tabanı kurulumundan başlayarak, arka uç API'leri, mobil uygulama geliştirme ve gelişmiş özelliklerin entegrasyonunu kapsar. Güvenlik, ölçeklenebilirlik ve kullanıcı deneyimi ön planda tutulmuştur.
+
+#### **1. Proje Kapsamı ve Hedefleri**
+FitnCo, kullanıcıların diyetisyenlerle iletişim kurmasını, günlük aktivitelerini (kilo, su, öğün, spor) takip etmesini ve kişiselleştirilmiş diyet planlarıyla ilerlemesini sağlayan bir mobil sağlık uygulamasıdır. Ana hedefler:
+- Kullanıcıların sağlık verilerini güvenli bir şekilde yönetmesi.
+- Diyetisyenlerin kullanıcı ilerlemesini aktif olarak izlemesi.
+- Sezgisel bir arayüzle yüksek kullanıcı katılımı.
+- KVKK ve GDPR gibi veri gizliliği yasalarına uyumluluk.
+
+#### **2. Veri Tabanı Kurulumu**
+Veri tabanı, uygulamanın temel taşıdır ve ekteki şema (`create_scheme.txt`) kullanılarak oluşturulacaktır.
+
+##### **Adımlar**
+1. **Veri Tabanı Seçimi**: PostgreSQL, ilişkisel yapısı ve ölçeklenebilirliği nedeniyle tercih edilir.
+2. **Şema Uygulama**:
+   - `users`: Kullanıcı kimlik doğrulama bilgileri (e-posta, şifre hash’i).
+   - `userprofiles`: Kullanıcı detayları (doğum tarihi, boy, kilo, alerjiler).
+   - `roles` ve `user_roles`: Rol tabanlı erişim kontrolü (admin, diyetisyen, kullanıcı).
+   - `diet_templates`, `user_diet_plan`: Diyet planları ve atamaları.
+   - `meals`, `water_logs`, `weight_logs`, `sport_logs`: Aktivite takibi.
+   - `chat_rooms`, `chat_messages`: Gerçek zamanlı iletişim.
+   - `notifications`: Bildirim yönetimi.
+   - `packages`, `user_package_purchases`: Abonelik yönetimi.
+3. **İlişkiler ve Kısıtlamalar**:
+   - UUID’ler birincil anahtar olarak kullanılacak.
+   - Yabancı anahtarlarla veri bütünlüğü sağlanacak.
+   - Yumuşak silme (soft delete) için `status` alanları kullanılacak.
+4. **Test**:
+   - Örnek verilerle tablo ilişkilerini doğrulayın.
+   - KVKK uyumluluğu için kullanıcı rızası (`consents`) tablosunu kontrol edin.
+
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    phone VARCHAR(20),
+    status VARCHAR(20) CHECK (status IN ('active', 'frozen', 'deleted')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE userprofiles (
+    user_id UUID PRIMARY KEY REFERENCES users(id),
+    birth_date DATE,
+    gender VARCHAR(10) CHECK (gender IN ('male', 'female', 'other')),
+    height INTEGER,
+    weight INTEGER,
+    target_weight INTEGER,
+    disease_info TEXT,
+    medication_info TEXT,
+    nutrition_habits TEXT,
+    has_parental_approval BOOLEAN,
+    kvkk_approved BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE roles (
+    id UUID PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE user_roles (
+    user_id UUID REFERENCES users(id),
+    role_id UUID REFERENCES roles(id),
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, role_id)
+);
+```
+
+#### **3. Arka Uç Geliştirme**
+Arka uç, uygulamanın iş mantığını ve veri tabanıyla iletişimi yönetir.
+
+##### **Adımlar**
+1. **Framework Seçimi**: Node.js ile Express veya .NET Core önerilir.
+2. **Kimlik Doğrulama**:
+   - JWT tabanlı kimlik doğrulama.
+   - Bcrypt ile şifre hash’leme.
+   - E-posta ile parola sıfırlama.
+3. **API Geliştirme**:
+   - **Kullanıcı Yönetimi**:
+     - `POST /api/users/register`: Yeni kullanıcı kaydı.
+     - `POST /api/users/login`: Kullanıcı girişi.
+     - `GET /api/users/:id`: Kullanıcı profili alma.
+     - `PUT /api/users/:id`: Profil güncelleme.
+   - **Diyet Planları**:
+     - `POST /api/diet-templates`: Diyet şablonu oluşturma.
+     - `GET /api/diet-templates`: Şablonları listeleme.
+     - `POST /api/users/:id/diet-plan`: Kullanıcıya diyet planı atama.
+   - **Aktivite Takibi**:
+     - `POST /api/logs/meals`: Öğün kaydı.
+     - `GET /api/logs/meals/:user_id`: Öğün geçmişi.
+   - **Bildirimler**:
+     - `POST /api/notifications`: Bildirim gönderme.
+     - `GET /api/notifications/:user_id`: Kullanıcı bildirimleri.
+   - **Sohbet**:
+     - `POST /api/chat/rooms`: Sohbet odası oluşturma.
+     - `POST /api/chat/messages`: Mesaj gönderme.
+   - **Paketler**:
+     - `GET /api/packages`: Mevcut paketler.
+     - `POST /api/users/:id/purchases`: Paket satın alma.
+4. **Ödeme Entegrasyonu**: Stripe veya IyziPay ile ödeme işlemleri.
+5. **Güvenlik**:
+   - HTTPS kullanımı.
+   - API isteklerinde giriş doğrulama.
+   - KVKK uyumluluğu için kullanıcı rızası yönetimi.
+
+```javascript
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { Pool } = require('pg');
+
+const app = express();
+app.use(express.json());
+
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'fitnco',
+  password: 'password',
+  port: 5432,
+});
+
+app.post('/api/users/register', async (req, res) => {
+  const { email, password, first_name, last_name } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      'INSERT INTO users (id, email, password_hash, first_name, last_name) VALUES (uuid_generate_v4(), $1, $2, $3, $4) RETURNING id',
+      [email, hashedPassword, first_name, last_name]
+    );
+    const token = jwt.sign({ userId: result.rows[0].id }, 'secret_key');
+    res.status(201).json({ token });
+  } catch (error) {
+    res.status(500).json({ error: 'Kayıt başarısız' });
+  }
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
+```
+
+#### **4. API Tasarımı**
+API’ler, mobil uygulamanın arka uçla iletişimini sağlar. Aşağıdaki tablo, temel uç noktaları özetler:
+
+| **Uç Nokta**                     | **Metot** | **Açıklama**                              |
+|----------------------------------|-----------|-------------------------------------------|
+| `/api/users/register`            | POST      | Yeni kullanıcı kaydı                     |
+| `/api/users/login`               | POST      | Kullanıcı girişi                         |
+| `/api/users/:id`                 | GET       | Kullanıcı profili alma                   |
+| `/api/users/:id`                 | PUT       | Kullanıcı profili güncelleme             |
+| `/api/diet-templates`            | POST      | Diyet şablonu oluşturma                  |
+| `/api/diet-templates`            | GET       | Diyet şablonlarını listeleme             |
+| `/api/users/:id/diet-plan`       | POST      | Kullanıcıya diyet planı atama            |
+| `/api/logs/meals`                | POST      | Öğün kaydı                               |
+| `/api/logs/meals/:user_id`       | GET       | Kullanıcının öğün geçmişini alma         |
+| `/api/notifications`             | POST      | Bildirim gönderme                        |
+| `/api/chat/rooms`                | POST      | Sohbet odası oluşturma                   |
+| `/api/chat/messages`             | POST      | Mesaj gönderme                           |
+| `/api/packages`                  | GET       | Mevcut paketleri listeleme               |
+| `/api/users/:id/purchases`       | POST      | Paket satın alma                         |
+
+#### **5. Mobil Uygulama Geliştirme**
+Mobil uygulama, kullanıcıların ana etkileşim noktasıdır.
+
+##### **Adımlar**
+1. **Framework Seçimi**: React Native.
+2. **Arayüz Tasarımı**:
+   - **Kayıt ve Giriş**: SMS/e-posta doğrulama, 18 yaş altı için ebeveyn onayı.
+   - **Onboarding**: Kullanıcı bilgileri, diyet alışkanlıkları, sağlık verileri.
+   - **Ana Ekran**: Öğün, su, spor ve kilo takibi modülleri.
+   - **Diyet Planı**: Takvim entegrasyonu ile plan görüntüleme.
+   - **Sohbet**: Diyetisyenlerle gerçek zamanlı iletişim.
+   - **Profil**: Kullanıcı bilgisi güncelleme.
+   - **Paket Satın Alma**: Ödeme entegrasyonu.
+3. **API Entegrasyonu**:
+   - Axios veya Dio ile API çağrıları.
+   - JWT token yönetimi.
+4. **Test**:
+   - Birim testleri (ör. giriş formu).
+   - Entegrasyon testleri (API çağrıları).
+
+```javascript
+import React, { useState } from 'react';
+import { View, TextInput, Button, Text } from 'react-native';
+import axios from 'axios';
+
+const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/users/login', {
+        email,
+        password,
+      });
+      console.log('Token:', response.data.token);
+    } catch (err) {
+      setError('Giriş başarısız');
+    }
+  };
+
+  return (
+    <View>
+      <TextInput
+        placeholder="E-posta"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        placeholder="Şifre"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <Button title="Giriş Yap" onPress={handleLogin} />
+      {error ? <Text>{error}</Text> : null}
+    </View>
+  );
+};
+
+export default LoginScreen;
+```
+
+#### **6. Gelişmiş Özellikler**
+1. **Bildirimler**:
+   - Firebase Cloud Messaging (FCM) ile push bildirimleri.
+   - Su içme, öğün kaydı ve abonelik bitiş hatırlatmaları.
+2. **Sohbet**:
+   - Socket.io ile gerçek zamanlı sohbet.
+   - Bağlantı paylaşımı ve admin mesaj silme.
+3. **Güvenlik**:
+   - Rol tabanlı erişim kontrolü.
+   - Fotoğraflara filigran ekleme.
+   - Ekran görüntüsü engelleme.
+4. **Performans**:
+   - Veri tabanı sorgularını indeksleme ile optimize etme.
+   - Önbellekleme (ör. Redis) kullanımı.
+
+#### **7. Dağıtım ve Bakım**
+1. **Arka Uç Dağıtımı**:
+   - AWS veya Heroku’ya dağıtım.
+   - CI/CD pipeline kurulumu.
+2. **Mobil Uygulama Yayınlama**:
+   - iOS ve Android için derleme.
+   - Google Play Store ve Apple App Store’a yükleme.
+3. **Bakım**:
+   - Sentry ile hata izleme.
+   - Kullanıcı geri bildirimlerine göre güncellemeler.
+
+#### **8. Gelecek İyileştirmeler**
+- Google Fit/Apple Health entegrasyonu.
+- Yapay zeka tabanlı motivasyon mesajları.
+
+#### **Riskler ve Azaltma Planları**
+| **Risk**                          | **Azaltma Planı**                              |
+|-----------------------------------|-----------------------------------------------|
+| Kullanıcıların bildirimleri reddetmesi | Bildirim avantajlarını kayıt sırasında açıklama |
+| Sistem aşırı yüklenmesi           | Ölçeklenebilir arka uç tasarımı ve önbellekleme |
+
+#### **Sonuç**
+Bu yol haritası ve eğitim dokümanı, FitnCo uygulamasını güvenli, ölçeklenebilir ve kullanıcı dostu bir şekilde geliştirmek için kapsamlı bir rehber sunar. Veri tabanı, arka uç, API’ler ve mobil uygulama, kullanıcı gereksinimlerine ve KVKK uyumluluğuna uygun olarak yapılandırılmıştır. Daha fazla detay veya belirli bir bölüm için lütfen belirtin!
+
+FitnCo 2 Mayıs 2025 Toplantı Notları
+1. Üyelerle İlgili Güncellemeler
+•	Üyelere, profil bilgilerinde güncelleme yapabilme imkânı sunulacak.
+•	Örnek: Soyadı değişikliği, kilo bilgisi, sağlık durumu gibi veriler güncellenebilecek.
+•	Admin tarafından üyeye ait bilgiler sil butonu aracılığıyla silinebilecek.
+2. Kilo Durumu ve Takip
+•	Kullanıcı kilo durumu grafiği eklenecek.
+•	Grafikle birlikte yorum ekranı oluşturulacak ve ekran kaydı alma özelliği sunulacak.
+•	Yönetim panelinden, bir kullanıcının tartı sonuçları düzenlenebilmeli.
+3. Spor Kutucuğu
+Spor kutucuğunun kaldırılması değerlendirilmekte. Geri dönüş bekleniyor.
+4. Chat Ekranı
+•	Chat ekranından kullanıcılara link gönderilebilecek.
+•	Danışan ile chat ekranında yapılan görümeler, danışan tarafından silinemeyecek. Ancak admin gerekli görürse dilediği mesajı silebilecek.
+5. Satın Alma ve Devam
+•	Kullanıcı programa devam etmek istiyorsa satın alma sayfasına yönlendirilecek.
+•	Satın alım yapmayan kullanıcılar uygulama ana ekranına geri dönecek.
+6. Hatırlatma Alanı
+Her kullanıcı için küçük hatırlatmalar yazılabilecek bir ekran talep ediliyor.
+7. Geri Bildirim ve İletişim
+•	"Bize Ulaşın" bölümü mail yoluyla çalışacak şekilde tasarlanacak.
+•	Geri bildirim bölümü kaldırılacak.
+8. Ödeme ve Form
+Başvuru formu kullanıcı kaydı oluşturulduktan sonra açılacak.
+
+
+FitnCo Mobil Uygulama Geliştirme Toplantı Notları
+Tarih: 8 Mayıs 2025
+1. Kullanıcı İşlevleri ve Gereksinimler
+•	Yaş Sınırlaması:
+o	18 yaşından küçük seçeneği uygulamadan kaldırılacak.
+•	Fotoğraf Yükleme:
+o	Kullanıcı ilk kez fotoğraf yüklemeye çalıştığında galeri erişim izni istenecek.
+•	Fatura Bilgileri:
+o	T.C. kimlik numarası faturalar için zorunlu hale getirilecek.
+2. Beslenme Bölümü Düzenlemeleri
+•	Aşağıdaki içerikler uygulamadan çıkarılacak:
+o	Tahıl
+o	Unlu yiyecekler
+o	Beslenme şekli
+o	Doğum kontrolü
+o	Sigara kullanımı
+Çıkarılacak maddelerle ilgili liste temin edilecek.
+3. Form ve Bilgilendirme Gereksinimleri
+•	Form Düzenlemeleri:
+o	Erkek ve kadın kullanıcılar için farklı form seçenekleri sunulacak.
+o	Müşteri tarafından form içeriği ile ilgili liste gönderilecek.
+•	Açık Rıza:
+o	Açık rıza metni imzalanmadan kullanıcılar uygulamaya giriş yapamayacak.
+•	Sözleşmeler:
+o	Kullanım koşulları ve üyelik sözleşmesi giriş ekranında yer alacak.
+o	Sözleşme ve kişisel verilerle ilgili belgeler müşteri tarafından temin edilecek.
+4. Teknik ve Fonksiyonel Özellikler
+•	Erişim ve Güvenlik:
+o	Galeri iznine kısıtlı erişim sağlanacak.
+o	Şifremi unuttum seçeneği e-posta yoluyla çözülecek.
+•	Arama Fonksiyonu:
+o	Arama kutusu 3 harf yazılarak işlem yapacak ve sonuçlar alfabetik sırayla listelenecek.
+•	Bildirim ve Yetkiler:
+o	Bildirim gönderme yetkisi yalnızca admin kullanıcıda olacak.
+
+5. Kullanıcı Deneyimi ve Geri Bildirim
+•	App Store:
+o	Kullanıcılar uygulamayı puanlayabilecek, ancak yorum yapmaları istenmeyecek.
+•	Bize Ulaşın:
+o	İletişim WhatsApp üzerinden sağlanacak.
+•	Geri Bildirim:
+o	Geri bildirim için özel bir alan bulunmayacak.
+•	Grafik Altı Yorumlar:
+o	Grafik altında 120 karakterden oluşan bir yorum alanı bulunacak.
+o	Bu alan, yalnızca admin tarafından yorumlu veya yorumsuz olarak paylaşılabilecek.
+6. Medya Yönetimi
+•	Fotoğraf Depolama Süresi:
+o	Uygulamaya yüklenen fotoğrafların ne kadar süreyle saklanacağı bilgisi belirlenecek ve kullanıcıya bildirilecek.
+
+
+
+
+FITNCO Mobil Uygulama Gereksinimleri
+1. Diyet ve Takip Özellikleri
+•	Diyet listeleri uzatılabilir olmalı.
+•	Diyet listelerinin altında firma ve diyetisyen kaşesi bulunmalı.
+•	Diyet listeleri takvime eklenebilmeli.
+•	Kullanıcıların süresi dolduğunda diyet listelerine erişimi engellenmeli.
+•	Alerjik içerikler  listelerde manuel olarak düzenlenebilmeli ve alerjisi olan kullanıcının önüne alerjik ürünün olduğu içerikteki diyet listesi hiç gelmemeli.
+•	Diyet şablonları oluşturulacak.
+•	Kayıtlı olan diyet listeleri havuzdan seçilip başka bir kullanıcıya atanabilecek.
+2. Kullanıcı Deneyimi ve Bildirimler
+•	Kullanıcı giriş yapmadıysa uygulama bildirim göndermeli.
+•	Öğününü göndermeyen kullanıcılara hatırlatma bildirimi yapılmalı.
+•	Kullanıcıların giriş durumu: Online olanlar yeşil, offline olanlar turuncu renkte gösterilmeli.
+•	Push bildirimleri kişiselleştirilebilir olmalı.
+•	Su içmeyi hatırlatan bildirimler gönderilmeli.
+•	“Bugün bildirim almak istemiyorum” seçeneği eklenmeli.
+•	Kullanıcının 30 günlük süresi dolmadan bir gün önce uyarı ekranı çıkmalı ve kullanıcı ile iletişime geçilmeli.
+•	Süresi dolan kullanıcılar listelenmeli.
+
+3. Güvenlik ve Yetkilendirme
+•	Role management sistemi entegre edilmeli.
+•	Kullanıcı ID ataması yapılmalı.
+•	Üyeler silinse bile bilgileri arşivde tutulmalı.
+•	Sisteme yüklenen fotoğraflara filigran eklenmeli.
+•	Kullanıcı ekran görüntüsü alamamalı.
+•	Excel dosyaları koruma programı ile korunmalı.
+•	Ön değerlendirme programı, mobil imza ve SMS doğrulaması gibi güvenlik önlemleri alınmalı.
+•	Premium’da ürün atama seçeneği olmalı.
+•	Aktif olan üye şifre sııfırlama seçeneği ile tekrar sisteme girebilmeli. Üyeliği askıda olanlar ise bu seçeneği kullanamamalı.
+
+4. Uygulama İçeriği ve Kullanımı
+•	Spor türleri eklenebilmeli ve adminler tarafından görülebilmeli.
+•	Kullanıcılar yüz yüze veya online danışan olarak ayrılabilmeli ve buna göre bildirim farklılığı olmalı.
+•	Ses kaydı gönderme özelliği eklenmeli.
+•	Simge (icon) yerine etiket kullanımı olacak.
+•	Küçük paketlerle müşteri bağlılığının arttırılması planlanıyor.
+•	Ofisteki ıslak imza süreci dijitalleştirilmeli.
+•	Google Drive’a doğrudan veri aktarımı sağlanmalı.
+•	Yazdır butonu eklenmeli (API sağlanırsa).
+•	Üyenin kg grafiği daha net anlaşılır olsun. Haftalık olarak üye kg verisine ulaşabilsin.
+5. Teknik Gereksinimler ve Entegrasyonlar
+•	Mevcut uygulamanın stabil çalışması sağlanmalı, aktif kullanıcılar yeni sisteme sorunsuz aktarılmalı.
+•	API ve endpointler ikinci fazda verilmeli, böylece bilgiler drive’ a gitmeden doğrudan alınabilmeli.
+•	Uygulama yüklenirken kamera kaydı, ses ve bildirim izinleri istenmeli, izin verilmezse uygulamaya devam edilememeli.
+•	Uygulama telefondan silindiyse, özel gün mesajları SMS ile gönderilmeli.
+•	Turkcell’deki sunucu alanı daraltılmalı.
+
+
+
+
+FITNCO (Müşteri İsterleri)
+Tarih: 17.04.2025 
+
+1.	Premium Paket Yönetimi:
+	Premium paketin açma ve kapatma işlemleri admin kontrolünde olacak.
+	Değişiklikler için müşteriler adminle iletişime geçecek.
+2.	Kullanıcı Geri Bildirimi:
+	Kullanıcılar öğünler ve yemeklerle ilgili geri bildirim veremeyecek.
+	Yorum yerine motivasyon notlarına izin verilecek. (Motivasyon yorumlarına onay verilecek.)
+3.	Paket Bölümü Güncellemesi:
+	Paket bölümü üçe çıkarılabilir.
+	Güncel olan detox paketi ön plana çıkarılacak.
+	Premium paket en üstte yer alacak.
+4.	Kayıt Güncellemeleri:
+	Hesap oluşturma sürecine SMS doğrulama ve e-posta onayı eklenecek.
+	18 yaş altı kullanıcılar için veli onayı seçeneği eklenecek.(mümkünse)
+	İki aşamalı aktivasyon süreci için yazılım ekibiyle görüşülecek.
+5.	Form Doldurma Süreci:
+	Form doldurma işlemi satın alma sonrasına taşınacak.
+6.	Premium Paket Özellikleri:
+	Premium kullanıcılar için sistemi durdurma seçeneği olmalı.
+7.	Kullanıcı Alımları:
+	Kullanıcıların aynı anda birden fazla ürün satın almasına izin verilecek.
+8.	Kullanıcı Profili ve Veriler:
+	Kullanıcıların kilo bilgilerini manuel olarak değiştirmesi engellenecek ("+" sembolü kaldırılacak).
+	Tartı görseli ile ilerlemek isteniyor.
+	Adminler, bir kullanıcının bir yıl içinde kaç kez geri geldiğini takip edebilecek.
+9.	Fotoğraf Yüklemeleri:
+	Fotoğraf yükleyen ve onay bekleyen müşteriler için bildirimler sohbet sistemine düşecek.
+10.	Diyet Planları:
+	7 günlük diyet listesi PDF formatında sunulacak.
+	Kullanıcı profilinde yaş alanı eklenecek.
+11.	Anlık Geri Bildirim:
+	Kullanıcıların anlık yorum yapmasına izin verilecek, ancak yorumlar admin onayına tabi olacak.
+12.	Aktivite Takibi:
+	Görselle desteklenen yürüyüş kayıtları eklenecek.
+	Aktiviteler adapte edilebilir olacak, örneğin sakatlık durumunda belirli aktiviteler tanımlanmayacak.
+	Yürüyüş aktivitesi ayrı bir bölümde/kartta gösterilecek.
+13.	Diyet Planı Seçenekleri:
+	Günlük diyet planları maksimum üç seçenekle sınırlandırılacak.
+	Kolay gezinme için sekme tabanlı(tab) bir arayüz uygulanacak.
+
+
+Mobil Uygulama
+FITNCO, kullanıcıların diyetisyenleri ile anlık sohbet edebileceği, günlük kilo, su, öğün ve spor aktivitelerini kaydedebileceği mobil bir sağlık uygulamasıdır.
+Uygulama, kullanıcıların özel diyet planlarıyla ilerlemelerini desteklerken, diyetisyenlerin bu süreci aktif şekilde yönetmesini sağlayacak özelliklerle donatılacaktır.
+2. Modüller ve Akışlar
+2.1 Kullanıcı Girişi ve Kayıt
+•	Klasik Giriş: E-posta + şifre
+•	Şifre Sıfırlama: Mail ile link gönderimi
+•	SMS Doğrulama + Mail Aktivasyonu (2 Aşalı Doğrulama)
+•	Misafir Modu: Sınırlı gezinti (kaydı olmayanlar)
+2.2 Onboarding Formları (Satın alma sonrası)
+•	Kışisel Bilgiler (Ad, Soyad, Boy, Kilo, Hedef Kilo)
+•	Beslenme Alışkanlıkları
+•	Hastalık ve İlaç Bilgileri
+•	KVKK ve Gizlilik Sözleşmesi Onayları
+•	18 Yaş Altı Veli Onayı Opsiyonu
+2.3 Ana Sayfa ve Takip Modülleri
+•	Günlük Öğün Takibi: Öğün ekleme, fotoğraf gönderimi
+•	Su Tüketimi: Hedef belirleme, bardak ekleme
+•	Spor Aktiviteleri: Spor türü ve süre girme
+•	Kilo Takibi: Tartı fotoğraflı kayıt zorunluluğu
+•	Bildirimler: Su, öğün, motivasyon mesajları
+2.4 Diyetisyen Sohbet Modülü
+•	Gerçek zamanlı chat (Metin + Fotoğraf Gönderimi)
+•	Kullanıcı ve Diyetisyen statüsü renkli durum (Online: Yeşil, Offline: Turuncu)
+•	Sohbette ses kaydı gönderimi (opsiyonel)
+2.5 Profil ve Ayarlar
+•	Profil Düzenleme
+•	Bildirim Ayarları
+•	KVKK ve Gizlilik Politikaları
+•	Şifre Değiştirme
+•	Hesap Dondurma / Hesap Kapatma
+•	Çıkış Yapma
+2.6 Paket Satın Alma
+•	Paket Seçimi (Premium / Detoks vb.)
+•	Kredi Kartı ile Ödeme
+•	Ödeme Başarı / Hata Ekranları
+•	Paket süre bitimine 1 gün kala uyarı bildirimleri
+3. Teknik Gereksinimler
+•	Flutter veya React Native tabanlı mobil geliştirme
+•	Backend API
+•	Firebase veya OneSignal ile push bildirim entegrasyonu
+•	Google Drive’ entegrasyonu (veri aktarımı için)
+4. Güvenlik Gereksinimleri
+•	Mobil ekran görüntüsü alınmasını engelleme
+•	Fotoğraflara uygulama içi filigran ekleme
+•	Kullanıcı bilgilerinin arşivlenmesi (soft delete)
+•	Role Management Sistemi: Admin / Diyetisyen / Kullanıcı
+5. Bildirim Stratejisi
+•	Su hatırlatma saat başı
+•	Öğün hatırlatma saatlerinde
+•	Kullanıcı günlük aktiviteleri tamamlamadıysa akşam özel bildirim
+•	"Bugün bildirim almak istemiyorum" opsiyonu aktif edilmeli
+6. Kritik Akışlar
+•	Satın Alma Öncesi: Misafir modu aktif.
+•	Satın Alma Sonrası: Form doldurma zorunlu.
+•	Aktivasyon Doğrulaması: SMS + Mail çift doğrulama.
+•	Diyet Listeleri: PDF formatında kullanıcıya sunulur.
+•	Su, Spor ve Öğün Takipleri: Zaman damgalı veritabanı kaydı gerekir.
+7. Opsiyonel Faz 2 Özellikler
+•	Google Fit / Apple Health veri senkronizasyonu
+•	Yapay Zeka ile motivasyon mesajları oluşturma
+
+
+
+ 
+Yönetim Paneli
+FITNCO Web Paneli, adminlerin ve diyetisyenlerin kullanıcıları ve içerikleri etkin bir şekilde yönetebilmesi için geliştirilecektir. Diyetisyenler, bireysel kullanıcılarla doğrudan etkileşim kurarken; adminler sistem genelini, müşterileri ve diyetisyenleri kontrol eder.
+2. Kullanıcı Roller ve Yetkileri
+•	Admin: Sistem geneli yönetimi, yetkilendirme, paket yönetimi, raporlama, müşteri işlemlerini görüntüleme, diyetisyenlerin takibi, diyet listelerinin oluşturulması, bildirim yönetimi, kullanıcı yönetimi, 
+•	Diyetisyen: Kullanıcıların takibi, sohbet, diyet listesi oluşturma, diyet listesi atama, bildirim gönderimi
+3. Modüller ve Özellikler
+3.1 Kullanıcı Yönetimi
+•	Kullanıcı listesi (aktif, pasif, çevrimiçi, dondurulmuş, silinmek için onay bekleyen ve silinmiş kullanıcılar filtreleri)
+•	Kullanıcı detay ekranı:
+o	Profil bilgileri
+o	Alerji bilgileri
+o	Tartı geçmişi ve grafikleri
+o	Öğün ve su tüketim kayıtları
+o	Spor aktiviteleri
+o	Diyet listeleri
+o	Paket bilgileri
+o	Ödeme bilgileri
+•	Kullanıcıya sistem mesajı gönderme
+o	Su içme hatırlatıcısı
+o	Öğün hatırlatma
+o	Spor bilgisi girmeme
+o	Günlük takip eksikliği
+o	Paket süresi bitimine yakın uyarı
+o	Motivasyon mesajı
+•	Kullanıcıyı dondurma/aktifleştirme
+3.2 Diyetisyen Yönetimi
+•	Diyetisyen listesi
+•	Diyetisyen profili görüntüleme ve düzenleme
+•	Diyetisyen kullanıcı adı şifre belirleme
+3.3 Sohbet Yönetimi
+•	Diyetisyenler tüm kullanıcılarla sohbet edebilir
+•	Fotoğraf ve metin destekli mesajlaşma
+•	Admin sohbet geçmişine erişebilir
+3.4 Diyet Listesi Yönetimi
+•	Ön tanımlı diyet şablonları oluşturma
+o	Havuz oluşturma
+o	Havuzdan diyet atama
+o	Tarifler
+•	Alerjik içerik kontrolü (Alerjen besinlerin işaretlenmesi)
+•	Atanan kişinin alerji durumuna göre listeden ürünlerin ayrıştırılması
+•	PDF / XLSX olarak diyet listesi çıktısı
+•	Diyet listesi üzerine kaşe imza
+3.5 Paket Yönetimi
+•	Paket oluşturma / güncelleme (Premium, Detoks vb.)
+•	Paket aktif/pasif yapma (admin yetkisinde)
+•	Kullanıcıya paket tanımlama
+3.6 Bildirim Yönetimi
+•	Otomatik bildirimlerin yönetilmesi
+•	Kişisel bildirim yönetimi
+•	Motivasyon mesajları gönderimi
+3.7 Spor Yönetimi
+•	Spor türleri eklenebilmeli
+•	Spor türünün
+3.8 Raporlama
+•	Kullanıcı aktivite raporları (kilo değişimi, spor, su tüketimi, diyet takibi)
+•	Yeni kayıt ve aktif paket kullanım raporları
+•	Kullanıcı geri dönüş istatistikleri (1 yıl içinde kaç kez geri geldi)
+4. Teknik Gereksinimler
+•	Web Framework: Next.js veya React.js + TailwindCSS/Bootstrap
+•	Backend: .NET Core / RestAPI
+•	Database: PostgreSQL
+•	Push Bildirim Servisi: Firebase Cloud Messaging / OneSignal
+5. Güvenlik Gereksinimleri
+•	JWT tabanlı authentication
+•	Role-based authorization (admin, diyetisyen, user)
+•	Güvenli medya yükleme (filigran ekleme)
+•	GDPR/KVKK uyumluluğu (açık rıza, veri silme, veri çıktı alma)
+6. Kritik Akışlar
+•	Paket bittiğinde kullanıcıyı otomatik pasif duruma alma
+•	Pasife alınan kullanıcının herhangi bir geçmişi görememesi
+•	Gönderilen öğün fotoğraflarının onay/inceleme mekanizması (Premium kullanıcılarda)
+•	Kullanıcıya aktivasyon süreci (Anlık bildirim + Mail)
+•	Grafik bazlı spor ve su tüketimi analizleri (dashboard)
+ 
+İŞ PLANI
+Zaman Çizelgesi ve Sprint Planı
+
+Sprint No	Gün	Hedef ve Deployment
+0	1-5	Gereksinim listesinin oluşturulması, yazılım mimarisinin belirlenmesi, CI/CD altyapısının oluşturulması.
+1	6-19	Kimlik Doğrulama (e-posta/şifre, SMS+e-posta, misafir modu) / Onboarding formları (kişisel/beslenme bilgileri, KVKK onayı)
+2	20-33 	Ana ekran & takip modülleri:  
+Öğün (fotoğraflı)
+Su takibi (bardak ekleme)
+Spor, kilo kaydı
+Yerel bildirimler & push prototipi
+3	34-47	Diyetisyen–kullanıcı chat:  
+Metin/foto/sesli mesajlaşma
+Çevrimiçi durumu, geçmiş
+
+Kullanıcı profil & ayarlar
+4	48-61	Paket satın alma & ödeme akışı:
+Paket seçimi, 3D Secure entegrasyonu
+Başarı/hata ekranları, bitiş uyarıları
+5	62-75	Web panel / Kullanıcı & Diyetisyen yönetimi:
+Roller, filtreleme, profiller
+Paket dondurma/aktif etme, dashboard
+6	76-89	Web panel – Diyet listesi & raporlama:  
+Şablonlar, PDF/XLSX çıkarımı
+Raporlar
+
+Entegrasyonlar (pushnotification, Drive) 
+Güvenlik (screenshot engelleme, filigran, GDPR/KVKK)
+
+İş Analizi Dokümanı
+Proje Adı: FİT'N CO Platform Geliştirme  
+Tarih: 26.03.2025 
+Hazırlayan: Tuğba Kantar
+
+1. İş Hedefleri
+- Kullanıcı ve diyet yönetimi için entegre bir platform sağlamak.
+- Etkileşimli panolar ve otomatik bildirimler aracılığıyla kullanıcı bağlılığını artırmak.
+- Kullanıcı verileri ve diyet planlarını yönetme sürecini kolaylaştırmak.
+
+2. Proje Kapsamı
+   Kapsam Dahilinde:
+  - Kullanıcı kayıt ve profil yönetimi.
+  - Raporlama yeteneklerine sahip bir panel geliştirilmesi.
+  - Ana Sayfa, Hakkımızda ve İletişim sayfaları (Haritalar ve formlar dahil) gibi web sitesi işlevsellikleri.
+  - Diyet yönetimi ve kullanıcı hatırlatmaları gibi uygulamaya özel özellikler.
+    Kapsam Dışında:
+  - Belirtilmeyen harici entegrasyonlar.
+
+ 3. Gereksinimler
+Fonksiyonel Gereksinimler:
+  - Kullanıcı Kaydı: Ön kayıt formları ve PDF formatında KVKK uyumu.
+  - Profil Yönetimi: Kullanıcı profillerinin düzenlenmesine ve güncellenmesine izin verilmesi.
+  - Raporlama: Kullanıcıya özel raporlar ve panolar.
+  - Bildirimler: Kullanıcıların bildirimleri etkinleştirmeden ilerleyememesi.
+  - Admin Özellikleri: Diyet yükleme, mevcut diyeti yeniden atama ve üyelik sona erdikten sonra kullanıcının diyetlerini gizleme.
+  - Kilo Takibi: Haftalık kiloları grafiksel ve sayısal olarak görüntüleme.
+  - Otomatik Hatırlatmalar: Online ve yüz yüze danışanlar için kilo ve randevu hatırlatmalarının entegrasyonu.
+Fonksiyonel Olmayan Gereksinimler:
+  - Aktif kullanıcılar için güvenli giriş sağlama, arşivlenmiş kullanıcıların giriş yapamaması.
+  - Hızlı yüklenme süreleri ile kesintisiz kullanıcı deneyimi.
+
+ 4. Kısıtlamalar ve Varsayımlar
+   Kısıtlamalar:
+  - Platform KVKK gibi veri gizliliği yasalarına uyum sağlamalıdır.
+  - Bildirimler belirtilen şekilde çalışmalıdır.
+   Varsayımlar:
+  - Kullanıcılar kayıt sırasında geçerli veriler sağlayacaktır.
+  - Adminler aktif olarak diyet planlarını yönetecektir.
+
+  5. Riskler ve Önlem Planları
+       Risk 1:Kullanıcıların bildirimleri etkinleştirme konusundaki direnci.
+  - Önlem Planı: Kaydın başlangıcında bildirim faydalarının net bir şekilde iletişimle anlatılması.
+      Risk 2: Birden fazla kullanıcıyla sistem yükünün artması.
+  - Önlem Planı: Arka ucu ölçeklenebilir hale getirme.
+
+
+
+
