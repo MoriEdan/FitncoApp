@@ -1,0 +1,48 @@
+Library Name,Current Version,Status,Action Required,Recommended Version,React 18 Compatible,RN 0.74 Compatible,Breaking Changes,Priority,Phase,Migration Notes
+react-native-device-info,^8.4.3,❌ NEEDS UPGRADE,UPGRADE,^11.1.0,✅,✅,Yes,High,2,Review device info method calls - some APIs deprecated
+react-native-simple-time-picker,^1.3.11,❌ NEEDS REPLACEMENT,REPLACE,@react-native-community/datetimepicker@^8.2.0,✅,✅,Yes,Medium,3,Complete rewrite of time picker implementation required
+rn-fetch-blob,latest,❌ NEEDS REPLACEMENT,REPLACE,react-native-blob-util@^0.19.9,✅,✅,Yes,Critical,1,API similar but method names changed - update file operations
+react-native-unimodules,^0.14.10,❌ NEEDS REMOVAL,REMOVE,Remove dependency,⚠️,⚠️,Yes,Critical,1,Remove from package.json and update imports
+@react-native-firebase/app,^14.5.0,❌ NEEDS UPGRADE,UPGRADE,^20.4.0,✅,✅,Yes,High,2,Update Firebase configuration
+@react-native-firebase/auth,^14.5.0,❌ NEEDS UPGRADE,UPGRADE,^20.4.0,✅,✅,Yes,High,2,Update authentication flows
+@react-native-firebase/messaging,^14.5.0,❌ NEEDS UPGRADE,UPGRADE,^20.4.0,✅,✅,Yes,High,2,Update push notification handling
+react-native-gesture-handler,^1.10.3,❌ NEEDS UPGRADE,UPGRADE,^2.18.1,✅,✅,Yes,High,2,Update gesture implementations
+react-native-screens,^3.6.0,❌ NEEDS UPGRADE,UPGRADE,^3.34.0,✅,✅,Minor,Medium,3,Update native dependencies
+react-native-safe-area-context,^3.3.0,❌ NEEDS UPGRADE,UPGRADE,^4.10.8,✅,✅,Yes,Medium,3,Update safe area hooks usage
+react-native-svg,^12.1.1,❌ NEEDS UPGRADE,UPGRADE,^15.6.0,✅,✅,Yes,Medium,4,Update SVG component props
+react-native-webview,^11.18.2,❌ NEEDS UPGRADE,UPGRADE,^13.10.5,✅,✅,Minor,Medium,4,Update WebView configurations
+axios,^0.25.0,❌ NEEDS UPGRADE,UPGRADE,^1.7.7,✅,✅,Yes,Critical,1,Update HTTP request configurations
+moment,^2.29.1,⚠️ CONSIDER REPLACEMENT,REPLACE,date-fns@^3.6.0 OR dayjs@^1.11.13,✅,✅,Yes,Low,4,Replace for better performance
+react,18.2.0,✅ COMPATIBLE,NONE,18.2.0,✅,✅,No,N/A,N/A,Current target version
+react-native,0.74.3,✅ COMPATIBLE,NONE,0.74.3,✅,✅,No,N/A,N/A,Current target version
+@react-navigation/native,^6.0.2,✅ COMPATIBLE,OPTIONAL,^6.1.18,✅,✅,No,Low,N/A,Consider patch update
+@react-navigation/bottom-tabs,^6.0.9,✅ COMPATIBLE,NONE,^6.0.9,✅,✅,No,N/A,N/A,Already compatible
+@react-navigation/drawer,^6.1.4,✅ COMPATIBLE,NONE,^6.1.4,✅,✅,No,N/A,N/A,Already compatible
+@react-navigation/native-stack,^6.1.0,✅ COMPATIBLE,NONE,^6.1.0,✅,✅,No,N/A,N/A,Already compatible
+@react-navigation/stack,^6.0.6,✅ COMPATIBLE,NONE,^6.0.6,✅,✅,No,N/A,N/A,Already compatible
+@react-native-async-storage/async-storage,^1.24.0,✅ COMPATIBLE,NONE,^1.24.0,✅,✅,No,N/A,N/A,Already compatible
+@react-native-community/checkbox,^0.5.10,✅ COMPATIBLE,NONE,^0.5.10,✅,✅,No,N/A,N/A,Already compatible
+@react-native-community/geolocation,^2.0.2,✅ COMPATIBLE,NONE,^2.0.2,✅,✅,No,N/A,N/A,Already compatible
+@react-native-community/masked-view,^0.1.10,✅ COMPATIBLE,NONE,^0.1.10,✅,✅,No,N/A,N/A,Already compatible
+@react-native-picker/picker,^2.2.1,✅ COMPATIBLE,NONE,^2.2.1,✅,✅,No,N/A,N/A,Already compatible
+react-native-bouncy-checkbox,^2.1.10,✅ COMPATIBLE,NONE,^2.1.10,✅,✅,No,N/A,N/A,Already compatible
+react-native-calendars,^1.1277.0,✅ COMPATIBLE,NONE,^1.1277.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-chart-kit,^6.11.0,✅ COMPATIBLE,NONE,^6.11.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-dynamically-selected-picker,^2.0.1,✅ COMPATIBLE,NONE,^2.0.1,✅,✅,No,N/A,N/A,Already compatible
+react-native-gifted-chat,^0.16.3,✅ COMPATIBLE,NONE,^0.16.3,✅,✅,No,N/A,N/A,Already compatible
+react-native-image-picker,^4.6.0,✅ COMPATIBLE,NONE,^4.6.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-linear-gradient,^2.5.6,✅ COMPATIBLE,NONE,^2.5.6,✅,✅,No,N/A,N/A,Already compatible
+react-native-modal,^13.0.1,✅ COMPATIBLE,NONE,^13.0.1,✅,✅,No,N/A,N/A,Already compatible
+react-native-permissions,^3.2.0,✅ COMPATIBLE,NONE,^3.2.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-raw-bottom-sheet,^2.2.0,✅ COMPATIBLE,NONE,^2.2.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-swipe-picker,^0.1.4,✅ COMPATIBLE,NONE,^0.1.4,✅,✅,No,N/A,N/A,Already compatible
+react-native-swiper,^1.6.0,✅ COMPATIBLE,NONE,^1.6.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-vector-icons,latest,✅ COMPATIBLE,NONE,latest,✅,✅,No,N/A,N/A,Already compatible
+toggle-switch-react-native,^3.3.0,✅ COMPATIBLE,NONE,^3.3.0,✅,✅,No,N/A,N/A,Already compatible
+expo,^53.0.11,✅ COMPATIBLE,NONE,^53.0.11,✅,✅,No,N/A,N/A,Already compatible
+expo-dev-client,~5.2.0,✅ COMPATIBLE,NONE,~5.2.0,✅,✅,No,N/A,N/A,Already compatible
+i18n-js,^3.8.0,✅ COMPATIBLE,NONE,^3.8.0,✅,✅,No,N/A,N/A,Already compatible
+react-native-localize,^2.1.9,✅ COMPATIBLE,NONE,^2.1.9,✅,✅,No,N/A,N/A,Already compatible
+socket.io-client,^4.5.1,✅ COMPATIBLE,NONE,^4.5.1,✅,✅,No,N/A,N/A,Already compatible
+react-native-windows,0.74.46,✅ COMPATIBLE,NONE,0.74.46,✅,✅,No,N/A,N/A,Already compatible
+

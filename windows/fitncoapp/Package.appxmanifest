@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="f96c1438-17d9-4ed7-b229-35d24172c836"
+    Name="d375bfc2-1516-4c22-9616-9cd67c1d25cc"
     Publisher="CN=micro"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="f96c1438-17d9-4ed7-b229-35d24172c836" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="d375bfc2-1516-4c22-9616-9cd67c1d25cc" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>fitncoapp</DisplayName>

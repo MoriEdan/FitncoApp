@@ -28,6 +28,8 @@ import {
   RESULTS,
 } from 'react-native-permissions';
 import messaging from '@react-native-firebase/messaging';
+import NetInfo from '@react-native-community/netinfo';
+
 const styles = StyleSheet.create({
   wr: {
     flex: 1,
@@ -87,6 +89,7 @@ export const UploadAvatarScreen = props => {
   const [photoModal, setPhotoModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(undefined);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {}, [isFocused]);
 
@@ -105,10 +108,10 @@ export const UploadAvatarScreen = props => {
           default:
             Alert.alert(
               '',
-              'Merhaba, spor ve öğün paylaşımlarınız için izinleri onaylamanız gerekmektedir. Bu izinler sadece fotoğraf gönderimine olanak sağlar ve telefonunuza erişim sağlanmaz. Teşekkür ederiz. Sağlıklı günler, Fit’n Co',
+              'Merhaba, spor ve öğün paylaşımlarınız için izinleri onaylamanız gerekmektedir. Bu izinler sadece fotoğraf gönderimine olanak sağlar ve telefonunuza erişim sağlanmaz. Teşekkür ederiz. Sağlıklı günler, Fit'n Co',
               [
                 {
-                  text: 'Ok',
+                  text: 'Tamam',
                   onPress: () => {
                     //Linking.openSettings();
                   },
@@ -118,51 +121,64 @@ export const UploadAvatarScreen = props => {
         }
       });
   };
-  const setPhoto = res => {
+  const handleImageSelection = async (res) => {
     if (res?.didCancel) {
       setPhotoModal(false);
-    } else {
+      return;
+    }
+    
+    try {
+      setIsUploading(true);
       setSelectedPhoto(res);
       setPhotoModal(false);
+    } catch (error) {
+      console.error('İmaj Seçimi Hatası:', error);
+      Alert.alert('Hata', 'İmaj seçimi hatası oluştu. Lütfen tekrar deneyiniz.');
+    } finally {
+      setIsUploading(false);
     }
   };
-  const openGallery = () => {
-
-       if (Platform.OS === 'ios'){
-      request(
-         PERMISSIONS.IOS.PHOTO_LIBRARY
-      ).then(result => {
-        console.log(result);
-        switch (result) {
-          case RESULTS.GRANTED:
-            launchImageLibrary(imageSelectOptions, res => {
-              setPhoto(res);
-                setPhotoModal(false);
-            });
-            break;
-          default:
-            Alert.alert(
-              '',
-              'Merhaba, spor ve öğün paylaşımlarınız için izinleri onaylamanız gerekmektedir. Bu izinler sadece fotoğraf gönderimine olanak sağlar ve telefonunuza erişim sağlanmaz. Teşekkür ederiz. Sağlıklı günler, Fit’n Co',
-              [
-                {
-                  text: 'Ok',
-                  onPress: () => {
-                    //Linking.openSettings();
-                  },
-                },
-              ],
-            );
-        }
-      });} else {
-  launchImageLibrary(imageSelectOptions, res => {
+  const openGallery = async () => {
+    if (Platform.OS === 'ios') {
+      const hasPermission = await requestPhotoPermission();
+      if (hasPermission) {
+        launchImageLibrary(imageSelectOptions, res => {
+          setPhoto(res);
+        });
+      }
+    } else {
+      launchImageLibrary(imageSelectOptions, res => {
         setPhoto(res);
       });
-      }
-
-
+    }
+  };
+  export const imageSelectOptions = Platform.OS === 'ios' ? {
+    saveToPhotos: true,
+    mediaType: 'photo',
+    includeBase64: false,
+    videoQuality: 'medium',
+    selectionLimit: 1,
+    maxWidth: 600,
+    maxHeight: 800,
+    quality: 0.5,
+    allowsEditing: true,
+    presentationStyle: 'fullScreen'
+  } : {
+    saveToPhotos: true,
+    mediaType: 'photo',
+    includeBase64: false,
+    videoQuality: 'medium',
+    selectionLimit: 1,
+    maxWidth: 768,
+    maxHeight: 1024,
+    quality: 0.5
   };
   const register = async () => {
+    const isConnected = await checkNetwork();
+    if (!isConnected) {
+      return;
+    }
+
     setLoading(true);
     const fcmToken = await messaging().getToken();
     const info = props.route.params;
@@ -186,12 +202,24 @@ export const UploadAvatarScreen = props => {
     if (info?.isParent) {
       data.append('parent', info?.parent);
     }
-    if (selectedPhoto){
+    if (selectedPhoto) {
+      const photo = selectedPhoto.assets[0];
+      data.append('pp', {
+        type: photo.type,
+        name: photo.fileName,
+        uri: Platform.OS === 'ios' ? photo.uri : photo.uri,
+      });
+    }
+    /** 
+     *     
+     * if (selectedPhoto){
     data.append('pp', {
       type: photo.type,
       name: photo.fileName,
       uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
     });}
+     * 
+    */
     const res = await fetch(REGISTER, {
       method: 'POST',
       body: data,
@@ -216,6 +244,44 @@ export const UploadAvatarScreen = props => {
       }
       setLoading(false);
     }
+  };
+  const requestPhotoPermission = async () => {
+    try {
+      const result = await request(
+        Platform.OS === 'ios' ? PERMISSIONS.IOS.PHOTO_LIBRARY : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
+      );
+      
+      if (result === RESULTS.GRANTED) {
+        return true;
+      } else {
+        Alert.alert(
+          'İzinleri Onaylama',
+          'Merhaba, spor ve öğün paylaşımlarınız için izinleri onaylamanız gerekmektedir. Bu izinler sadece fotoğraf gönderimine olanak sağlar ve telefonunuza erişim sağlanmaz. Teşekkür ederiz. Sağlıklı günler, Fitn Co.',
+          [
+            {
+              text: 'Ayarları Aç',
+              onPress: () => Linking.openSettings(),
+            },
+            {
+              text: 'İptal',
+              style: 'cancel',
+            },
+          ]
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error('İzinleri onaylama hatası:', error);
+      return false;
+    }
+  };
+  const checkNetwork = async () => {
+    const netInfo = await NetInfo.fetch();
+    if (!netInfo.isConnected) {
+      Alert.alert('İnternet Bağlantısı', 'Lütfen internet bağlantınızı kontrol ediniz ve tekrar deneyiniz.');
+      return false;
+    }
+    return true;
   };
   return (
     <Container style={styles.wr}>
